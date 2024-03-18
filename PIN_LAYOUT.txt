@@ -1,1 +1,2 @@
-This document specifies what pins are used for each external module/circuit component. Readily update this document whenever a new module is added to the circuit board.
+This document specifies what pins are used for each external module/circuit component.
+Immediately update this document whenever a new module is added to the circuit board!!
