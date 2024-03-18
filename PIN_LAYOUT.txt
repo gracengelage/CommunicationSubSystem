@@ -1,2 +1,20 @@
 This document specifies what pins are used for each external module/circuit component.
 Immediately update this document whenever a new module is added to the circuit board!!
+
+######################################################################################
+######################################################################################
+
+Radio Frequency
+
+Transmitter:
+   GND > PIN 09 (GND)
+   VCC > PIN 02 (5V)
+  DATA > PIN 11 (GPIO17)
+
+Receiver:
+   VCC > PIN 04 (5V)
+  DATA > PIN 13 (GPIO27)
+   GND > PIN 06 (GND)
+
+######################################################################################
+######################################################################################
