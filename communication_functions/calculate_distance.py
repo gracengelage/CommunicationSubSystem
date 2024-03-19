@@ -1,6 +1,6 @@
-from math import radians, sin, cos, sqrt, atan2
+from math import radians, sin, cos, sqrt, asin, pi
 
-def loc_str2float(loc_str):
+def loc_str2float(loc_str) -> tuple:
     """
     Convert a string of GPS location into tpules of floats containing angular coordinates
 
@@ -30,6 +30,18 @@ def loc_str2float(loc_str):
         return (coord1, coord2)
     return (coord2, coord1)
 
+def haversine(theta) -> float:
+    """ 
+    Helper function for computing the haversine of an angle
+
+    Parameter:
+    theta (float): angle in radian
+
+    Returns:
+    float: the haversine of the angle
+    """
+    return (sin(theta/2))**2
+
 
 def calculate_distance(sender_loc_str, receiver_loc_str) -> float:
     """
@@ -42,13 +54,31 @@ def calculate_distance(sender_loc_str, receiver_loc_str) -> float:
     Returns:
     float: Distance between the two points in meters.
     """
+
+    # Decode string coordinates into numerical values
     lat1, long1 = loc_str2float(sender_loc_str)
     lat2, long2 = loc_str2float(receiver_loc_str)
 
-    return 1
+    # Convert to radian
+    lat1 *= pi/180
+    long1 *= pi/180
+    lat2 *= pi/180
+    long2 *= pi/180
+
+    # Compute distance using the Haversine formula
+    # https://en.wikipedia.org/wiki/Haversine_formula 
+    
+    R = 6371.0 * 1e3 # Radius of earth in meters
+    delta_lat = lat1 - lat2
+    delta_long = long1 - long2
+    h = haversine(delta_lat) + cos(lat1) * cos(lat2) * haversine(delta_long)
+    d = 2 * R * asin(sqrt(h))
+
+    return d
 
 if __name__ == "__main__":
-    loc_str_1 = "044182738450115123456783"
+    loc_str_1 = "043653927650079366740613" # (43.6539276567441, -79.36674061713879)
+    loc_str_2 = "043654256660079365365273" # (43.65425666252635, -79.36536527097456)
 
-    loc = loc_str2float(loc_str_1)
-    print(loc)
+    # loc = loc_str2float(loc_str_1)
+    print(calculate_distance(loc_str_1, loc_str_2))
