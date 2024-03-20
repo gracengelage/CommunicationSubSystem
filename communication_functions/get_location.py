@@ -1,17 +1,42 @@
 from external_packages.GPS.micropyGPS import MicropyGPS
 from external_packages.GPS import l76x
+
+def location_string(latitude_val,
+                    latitude_hemisphere,
+                    longitude_val,
+                    longitude_hemisphere) -> str:
+    """
+    Input Parameters:
+    Latitude ~ the latitude value as a decimal number
+    Longitude ~ the longitude value as a decimal number
+
+    Output Parameters:
+    Output Parameters:
+    Location Information ~ a string representing the location of the device in degrees
+                         ~ "XXXYYYYYYYYDAAABBBBBBBBE"
+                         ~ 3 X's is latitude's integer part; if magnitude is less than 100,
+                           leftmost digits are filled with zero
+                         ~ 8 Y's are the decimals of the latitude
+                         ~ D denotes hemisphere of latitude (N = 0, E = 1, S = 2, W = 3)
+                         ~ 3 A's is the longitude's integer part (similar to X's)
+                         ~ 8 B's are the decimals of the longitude
+                         ~ E denotes hemisphere of longitude (N = 0, E = 1, S = 2, W = 3)
+                         ~ Example: 44.18273845N, 115.12345678W
+                         ~ "044182738450115123456783"
+    """
+
+    # convert latitude value into a string and
+    # split latitude value into integer part and the 8 decimals that follow
+    latitude_int, latitude_dec = str(latitude_val).split(".")[0], str(latitude_val).split(".")[1][:8]
+
+    # convert longitude value into a string and
+    # split longitude value into integer part and the 8 decimals that follow
+    longitude_int, longitude_dec = str(longitude_val).split(".")[0], str(longitude_val).split(".")[1][:8]
+
+
+
 # Output Parameters:
-# Location Information ~ a string representing the location of the device in degrees
-#                      ~ "XXXYYYYYYYYDAAABBBBBBBBE"
-#                      ~ 3 X's is latitude's integer part; if magnitude is less than 100,
-#                        leftmost digits are filled with zero
-#                      ~ 8 Y's are the decimals of the latitude
-#                      ~ D denotes hemisphere of latitude (N = 0, E = 1, S = 2, W = 3)
-#                      ~ 3 A's is the longitude's integer part (similar to X's)
-#                      ~ 8 B's are the decimals of the longitude
-#                      ~ E denotes hemisphere of longitude (N = 0, E = 1, S = 2, W = 3)
-#                      ~ Example: 44.18273845N, 115.12345678W
-#                      ~ "044182738450115123456783"
+# Location Information ~ the location string as detailed in the location_string function output
 def get_location() -> str:
     # GPS module setup code from datasheet: https://www.waveshare.com/wiki/Pico-GPS-L76B
     # define the UART number (default 0) and its baudrate (default 9600)
@@ -44,4 +69,7 @@ def get_location() -> str:
             location_received = location.update(new_char)
 
             if location_received and location.valid:
-                return location_string(location.longitude, location.latitude)
+                return location_string(location.latitude[0],
+                                       location.latitude[1],
+                                       location.longitude[0],
+                                       location.latitude[1])
