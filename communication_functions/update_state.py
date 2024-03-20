@@ -1,4 +1,9 @@
 import time
+from external_packages.custom_rf.receiver import Receiver
+from communication_functions.get_location import get_location
+from communication_functions.signal_transmission import receive_signal
+from communication_functions.calculate_distance import calculate_distance
+
 
 # State 0 - light is OFF
 # State 1 - light is ON and needed
@@ -10,6 +15,10 @@ print("state:", state)
 # Initialise motion and communication
 motion = 0
 communication = 0
+location = 0
+# UPDATE THIS to be based on user input? --------------------------------------------------------------
+range = 20 # meters TBD!!
+# -----------------------------------------------------------------------------------------------------
 
 # need to keep track of when state 2 starts
 wait_start_time = 0
@@ -20,12 +29,23 @@ loop = True  # Changed to True
 
 while loop:  # Simplified loop condition to while loop
 
-    # Update motion and communication (terminal inputs for now)
+    #CHECK THAT THIS WORKS!! ---------------------------------------------------------------------------
+    #update location at 5pm every day
+    if location == 0 or time.localtime() == "17:00:00":
+        location == get_location()
+    
+    # motion is a terminal input for now
     motion = 1 if input("Motion detected? (0/1): ") == "1" else 0
-    communication = 1 if input("Communication detected? (0/1): ") == "1" else 0
+    
+    # detects incoming signal, checks if it's in range, updates accordingly
+    motion_location = receive_signal(Receiver)
+    distance = calculate_distance(motion_location, location)
+    communication = 1 if distance <= range else 0
+    #communication = 1 if input("Communication detected? (0/1): ") == "1" else 0
     
     if input("End (Y/N): ") == "Y":
         break
+    # ---------------------------------------------------------------------------------------------------
 
     # Changing of States
     # State 0 until motion or communication is detected
