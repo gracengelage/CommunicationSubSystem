@@ -90,5 +90,3 @@ def get_location() -> str:
                                        location.latitude[1],
                                        location.longitude[0],
                                        location.latitude[1])
-
-print(location_string(0.66774356, "N", 104.111, "W"))
