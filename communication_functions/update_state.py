@@ -66,7 +66,7 @@ while True:
     #communication = 1 if input("Communication detected? (0/1): ") == "1" else 0
 
     # Detect incoming signal, check if it's in range, and update accordingly
-    motion_location = receive_signal(Receiver)
+    motion_location = receive_signal(Receiver(27))
     distance = calculate_distance(motion_location, location)
     communication = 1 if distance <= range_meters else 0
 
