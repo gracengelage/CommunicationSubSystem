@@ -1,3 +1,5 @@
+import time
+
 # Output Parameters:
 # Location Information ~ a string representing the location of the device in degrees
 #                      ~ "NXXXYYYYYYYYDMAAABBBBBBBBE"
@@ -12,5 +14,6 @@
 #                      ~ E denotes hemisphere of second coordinate (N = 0, E = 1, S = 2, W = 4)
 #                      ~ Example: 44.18273845N, 115.12345678W
 #                      ~ "20441827384503115123456784"
-def get_location(last_update=None):
-    pass
+def get_location() -> str:
+    # GPS needs warm up time, GPS until a valid location is received
+    location_received = False

@@ -30,5 +30,5 @@ def send_signal(location, status):
 # Output Parameters
 # recevier code: a string "N...ES" that denotes the location of signal source and S denotes motion sensing status 
 # (More details about N -> E location signal in get location section)
-def receive_signal(rf_receiver):
+def receive_signal(rf_receiver) -> str:
     return str(rf_receiver.rx_code)
