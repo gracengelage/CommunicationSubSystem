@@ -1,5 +1,5 @@
-from external_packages.GPS.micropyGPS import MicropyGPS
 from external_packages.GPS import l76x
+from external_packages.GPS.micropyGPS import MicropyGPS
 
 def location_string(latitude_val,
                     latitude_hemisphere,
@@ -33,7 +33,24 @@ def location_string(latitude_val,
     # split longitude value into integer part and the 8 decimals that follow
     longitude_int, longitude_dec = str(longitude_val).split(".")[0], str(longitude_val).split(".")[1][:8]
 
+    # convert North, East, South, West into numerical representations
+    hemisphere_code = {
+        "N": "0",
+        "E": "1",
+        "S": "2",
+        "W": "3"
+    }
 
+    return ''.join(["0" * (3 - len(latitude_int)),
+                    latitude_int,
+                    latitude_dec,
+                    "0" * (8 - len(latitude_dec)),
+                    hemisphere_code[latitude_hemisphere],
+                    "0" * (3 - len(longitude_int)),
+                    longitude_int,
+                    latitude_dec,
+                    "0" * (8 - len(longitude_dec)),
+                    hemisphere_code[longitude_hemisphere]])
 
 # Output Parameters:
 # Location Information ~ the location string as detailed in the location_string function output
@@ -73,3 +90,5 @@ def get_location() -> str:
                                        location.latitude[1],
                                        location.longitude[0],
                                        location.latitude[1])
+
+print(location_string(0.66774356, "N", 104.111, "W"))
