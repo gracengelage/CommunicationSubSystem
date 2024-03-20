@@ -35,7 +35,16 @@ class Transmitter:
             # bin(ord(char)) converts this integer to a binary string (e.g., '0b1100001' for 'a').
             # The [2:] slices the binary string to remove the '0b' prefix.
             # .zfill(8) ensures that the binary string is padded with zeros to make it 8 bits long, which is standard for ASCII characters.
-            for bit in bin(ord(char))[2:].zfill(8):
+            bit_string = bin(ord(char))[2:]
+            padded_bit_string = '0' * (8 - len(bit_string)) + bit_string
+            for bit in padded_bit_string:
                 self.send_bit(int(bit))
             self.data_pin.value(0)  # Inter-character spacing
             utime.sleep(0.01)
+        
+        # Print a new line character at the end
+        ending = '00001010' # binary rep of new line
+        for bit in ending:
+            self.send_bit(int(bit))
+        self.data_pin.value(0)
+        utime.sleep(0.01)
