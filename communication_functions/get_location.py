@@ -1,5 +1,5 @@
-from ..external_packages.GPS import l76x
-from ..external_packages.GPS.micropyGPS import MicropyGPS
+from external_packages.GPS import l76x
+from external_packages.GPS.micropyGPS import MicropyGPS
 
 def location_string(latitude_val,
                     latitude_hemisphere,
