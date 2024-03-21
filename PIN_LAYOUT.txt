@@ -16,5 +16,17 @@ Receiver:
   DATA > PIN 32 (GPIO27)
    GND > (GND)
 
+Lights (these can be moved to other pins)
+
+LED 1 (Big light):
+   VCC > (3V3)
+  DATA > PIN 16 (GPIO23)
+   GND > (GND)
+
+LED 2 (Indicator):
+   VCC > (3V3)
+  DATA > PIN 18 (GPIO24)
+   GND > (GND)
+
 ######################################################################################
 ######################################################################################
