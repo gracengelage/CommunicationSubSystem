@@ -38,6 +38,7 @@ while True:
     # get location at the beginning or once 10 seconds for testing
     if location is None or utime.ticks_diff(current_time, start_time) / 1000 > 10:
         location = get_location()
+        print(location)
 
     # transmitter sending signal
     transmitter.send_message("sheep")
