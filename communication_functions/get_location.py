@@ -27,11 +27,11 @@ def location_string(latitude_val,
 
     # convert latitude value into a string and
     # split latitude value into integer part and the 8 decimals that follow
-    latitude_int, latitude_dec = str(latitude_val).split(".")[0], str(latitude_val).split(".")[1][:8]
+    latitude_int, latitude_dec = '{:.8f}'.format(latitude_val).split(".")[0], '{:.8f}'.format(latitude_val).split(".")[1][:8]
 
     # convert longitude value into a string and
     # split longitude value into integer part and the 8 decimals that follow
-    longitude_int, longitude_dec = str(longitude_val).split(".")[0], str(longitude_val).split(".")[1][:8]
+    longitude_int, longitude_dec = '{:.8f}'.format(longitude_val).split(".")[0], '{:.8f}'.format(longitude_val).split(".")[1][:8]
 
     # convert North, East, South, West into numerical representations
     hemisphere_code = {

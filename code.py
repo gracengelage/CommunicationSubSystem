@@ -72,6 +72,8 @@ while True:
 
     # get location at the beginning or once 10 seconds for testing
     if location is None or utime.ticks_diff(current_time, start_time) / 1000 > 10:
+        location = get_location()
+        print(location)
         # location = get_location()
         # print(location)
         location = location_string(43.659388, 'N', 79.396534, 'W')
@@ -111,10 +113,6 @@ while True:
         INDICATOR.on()
     else:
         INDICATOR.off()
-
-    # Delay to avoid hogging the CPU
-    # time.sleep(1)
-
 
     utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
 
