@@ -1,6 +1,6 @@
 import time
 import board
-import digitalio
+import machine
 from external_packages.custom_rf.receiver import Receiver
 from communication_functions.get_location import get_location
 from communication_functions.signal_transmission import receive_signal
@@ -41,12 +41,12 @@ def next_state(current_state, motion, communication, wait_start_time, wait_durat
 ################
 
 # This LED represents the big light
-LIGHT = digitalio.DigitalInOut(board.GP23)
-LIGHT.direction = digitalio.Direction.OUTPUT
+LIGHT = machine.Pin(17, Pin.OUT) # GP13
+# LIGHT.direction = digitalio.Direction.OUTPUT
 
 # This LED represents the indicator that a signal has been received
-INDICATOR = digitalio.DigitalInOut(board.GP24)
-INDICATOR.direction = digitalio.Direction.OUTPUT
+INDICATOR = machine.Pin(19, Pin.OUT) # GP14
+# INDICATOR.direction = digitalio.Direction.OUTPUT
 
 ################
 # State setup
@@ -96,18 +96,18 @@ while True:
     ################
     # Light control
     if state == 1 or state == 2:
-        LIGHT.value = True
+        LIGHT.value(1)
     else:
-        LIGHT.value = False
+        LIGHT.value(0)
 
     #################
     # Indicator LED
     #################
     # If a location is being received, light up
     if motion_location != 0:
-        INDICATOR.value = True
+        INDICATOR.value(1)
     else:
-        INDICATOR.value = False
+        INDICATOR.value(0)
 
     # Delay to avoid hogging the CPU
     time.sleep(1)
