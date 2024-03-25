@@ -20,12 +20,12 @@ Lights (these can be moved to other pins)
 
 LED 1 (Big light):
    VCC > (3V3)
-  DATA > PIN 16 (GPIO23)
+  DATA > PIN 17 (GPIO13)
    GND > (GND)
 
 LED 2 (Indicator):
    VCC > (3V3)
-  DATA > PIN 18 (GPIO24)
+  DATA > PIN 19 (GPIO14)
    GND > (GND)
 
 ######################################################################################
