@@ -39,11 +39,11 @@ location = None
 ################
 
 # This LED represents the big light
-LIGHT = machine.Pin(17, machine.Pin.OUT) # GP13
+LIGHT = machine.Pin(13, machine.Pin.OUT) # GP13
 # LIGHT.direction = digitalio.Direction.OUTPUT
 
 # This LED represents the indicator that a signal has been received
-INDICATOR = machine.Pin(19, machine.Pin.OUT) # GP14
+INDICATOR = machine.Pin(14, machine.Pin.OUT) # GP14
 # INDICATOR.direction = digitalio.Direction.OUTPUT
 
 ################
@@ -80,8 +80,8 @@ while True:
         # print("location:", location)
 
     bit = receiver.read_bit()
-    if bit == 0:
-        print(bit, end=' ')
+    # if bit == 0:
+    
     motion_location = location_string(43.659460, 'N', 79.396551, 'W')
 
     distance = calculate_distance(motion_location, location)
@@ -99,10 +99,14 @@ while True:
     ################
     # Light control
     if (state == 1 or state == 2) and bit == 0:
-        print("Let there be light")
+        # print(bit, end=' ')
+        # print("Let there be light")
         LIGHT.on()
-        utime.sleep(2)
+        utime.sleep(1)
+        LIGHT.off()
     else:
+        # print(bit, end=' ')
+        # print("NO LIGHT")
         LIGHT.off()
 
     #################
@@ -115,4 +119,5 @@ while True:
         INDICATOR.off()
 
     utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
+
 
