@@ -20,6 +20,8 @@ elif usys.platform == "esp8266":  # Hardware SPI
     cfg = {"spi": 1, "miso": 12, "mosi": 13, "sck": 14, "csn": 4, "ce": 5}
 elif usys.platform == "esp32":  # Software SPI
     cfg = {"spi": -1, "miso": 32, "mosi": 33, "sck": 25, "csn": 26, "ce": 27}
+elif usys.platform == "rp2":  # PI PICO
+    cfg = {"spi": 0, "miso": 4, "mosi": 7, "sck": 6, "csn": 14, "ce": 17}
 else:
     raise ValueError("Unsupported platform {}".format(usys.platform))
 
