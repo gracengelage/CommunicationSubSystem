@@ -6,15 +6,13 @@ Immediately update this document whenever a new module is added to the circuit b
 
 Radio Frequency
 
-Transmitter:
-   GND > (GND)
-   VCC > (3V3)
-  DATA > PIN 22 (GPIO17)
-
-Receiver:
-   VCC > (3V3)
-  DATA > PIN 32 (GPIO27)
-   GND > (GND)
+Pin 36 / 3V3 Out > VCC
+Pin 38 / GND (or any other GND Pin) > GND
+Pin 22 / GP17 > CE
+Pin 19 / GP14 > CS
+Pin 9 / GP6 > SCK
+Pin 10 / GP7 > MOSI
+Pin 6 / GP4 > MISO
 
 Lights (these can be moved to other pins)
 
