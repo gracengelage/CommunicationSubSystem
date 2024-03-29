@@ -105,8 +105,8 @@ nrf24l01test.master()
 # General Setup
 ###############
 
-start_time = utime.ticks_ms()
-current_time = utime.ticks_ms()
+start_time = utime.time()
+current_time = utime.time()
 
 ########################
 # Receiver related setup
@@ -140,53 +140,49 @@ LIGHT = machine.Pin(13, machine.Pin.OUT) # GP13
 INDICATOR = machine.Pin(14, machine.Pin.OUT) # GP14
 # INDICATOR.direction = digitalio.Direction.OUTPUT
 
-################
+##############
+# Sensor Setup
+##############
+
+pir = machine.Pin(3, machine.Pin.IN)
+
+#############
 # State setup
-################
+#############
 
 state = 0
 
-# Initialise motion and communication
+# Initialise motion and communication signal
 motion = 0
 communication = 0
-location = None
+
 # need to keep track of when state 2 starts
-wait_start_time = 0
+wait_start_time = utime.time()
+
 # UPDATE THIS to be based on user input? --------------------------------------------------------------
-wait_duration = 1  # seconds for the sake of testing
+wait_duration = 5  # seconds for the sake of testing
 range_meters = 50000  # TBD!!
-
-
-
 
 while True:
     # update the current time every loop
-    current_time = utime.ticks_ms()
-    # print("start")
-    # print("current time:", current_time)
-    # print("start time:", start_time)
+    current_time = utime.time()
 
     # get location at the beginning or once 10 seconds for testing
-    if location is None or utime.ticks_diff(current_time, start_time) / 1000 > 10:
+    if location is None or current_time - start_time > 10:
         location = get_location()
         print(location)
-        # location = get_location()
-        # print(location)
         location = location_string(43.659388, 'N', 79.396534, 'W')
-        # print("location:", location)
-
-    bit = receiver.read_bit()
-    # if bit == 0:
     
     motion_location = location_string(43.659460, 'N', 79.396551, 'W')
 
     distance = calculate_distance(motion_location, location)
-    communication = 1 if distance <= range_meters else 0
 
-    # To simulate the end of night (and let the loop break)
-    # if input("End (Y/N): ") == "Y":
-        # break
-    # ---------------------------------------------------------------------------------------------------
+    if not distance <= range_meters:
+        communication = 0
+    else:
+        # flip the bit value as during transmission bit gets flipped
+        # 1 means communication signal received, 0 means no communication signal
+        communication = 1 if receiver.read_bit() == 0 else 0
 
     state, wait_start_time = next_state(state, motion, communication, wait_start_time, wait_duration)
 
@@ -194,15 +190,9 @@ while True:
     # Big light
     ################
     # Light control
-    if (state == 1 or state == 2) and bit == 0:
-        # print(bit, end=' ')
-        # print("Let there be light")
+    if (state == 1 or state == 2):
         LIGHT.on()
-        utime.sleep(1)
-        LIGHT.off()
     else:
-        # print(bit, end=' ')
-        # print("NO LIGHT")
         LIGHT.off()
 
     #################

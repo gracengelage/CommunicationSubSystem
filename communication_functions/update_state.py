@@ -11,7 +11,6 @@ import utime
 #               communication (0,1) 1 if communication is detected in range, otherwise 0
 #               wait_start_time (from time.time()) which tells the time that state 2 started
 #               wait_duration (in seconds) how long the light should stay on once there is no motion detected in range
-#               
 def next_state(current_state, motion, communication, wait_start_time, wait_duration):
     if current_state == 0:
         if communication == 1 or motion == 1:
