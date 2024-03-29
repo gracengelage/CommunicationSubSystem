@@ -215,5 +215,3 @@ while True:
         INDICATOR.off()
 
     utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
-
-
