@@ -68,6 +68,24 @@ wait_duration = 5  # seconds for the sake of testing
 range_meters = 50000  # TBD!!
 
 while True:
+    ##################
+    # Transmitter Code 
+    ##################
+
+    motion = pir.value()
+    if motion == 1:
+        LIGHT.on()
+        for i in range(8):
+            transmitter.send_bit(0)
+        print("message sent: 00000000")
+        utime.sleep(1)
+
+    utime.sleep(1)
+
+    ##################
+    # Receiver Code 
+    ##################
+
     # update the current time every loop
     current_time = utime.time()
 
