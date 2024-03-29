@@ -4,6 +4,7 @@ import utime
 #######################
 # next_state function
 ####################### 
+
 # outputs are:  current state (0,1 or 2)
 #               wait_start_time (from time.time()) which tells the time that state 2 started
 # inputs are:   current state (0,1 or 2)
@@ -12,6 +13,11 @@ import utime
 #               wait_start_time (from time.time()) which tells the time that state 2 started
 #               wait_duration (in seconds) how long the light should stay on once there is no motion detected in range
 def next_state(current_state, motion, communication, wait_start_time, wait_duration):
+    """
+    State 0: no detection
+    State 1: detection or received RF signal
+    State 2: just activated signal; waiting to see if there is more incoming signal
+    """
     if current_state == 0:
         if communication == 1 or motion == 1:
             print("State changed to 1")
