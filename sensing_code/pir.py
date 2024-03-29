@@ -1,5 +1,9 @@
 '''
-PIR Sensor Code v1
+PIR Sensor Code v2
+
+Changes:
+- fixed bug that the pir was not yet defined before reading the value
+
 Modified from ESC204 2024S Lab 5, Task E
 Task: Take readings using a passive infrared sensor.
 '''
@@ -14,8 +18,13 @@ import digitalio
 # set up code constants:
 useOnBoardLED = True
 pollingRate = 0.1 #in seconds, LIKELY NEED TO CHANGE THIS ACROSS ALL CODE unless we run things in parallel
-sensorPin = board.GP1   #! change for other pins if necessary
+sensorPin = board.GP3   #! change for other pins if necessary
                         # data input pin for the PIR sensor
+                        
+                        
+# Set up digital input for PIR sensor:
+pir = digitalio.DigitalInOut(sensorPin)
+pir.direction = digitalio.Direction.INPUT
 pir_value = pir.value #! the sensor returns a value of true or false
 #? calibration for PIR is done physically by adjusting resistance in the circuit, not in code
 #? will explore best calibration later if necessary
@@ -27,9 +36,7 @@ if useOnBoardLED:
     led = digitalio.DigitalInOut(board.LED)
     led.direction = digitalio.Direction.OUTPUT
 
-# Set up digital input for PIR sensor:
-pir = digitalio.DigitalInOut(sensorPin)
-pir.direction = digitalio.Direction.INPUT
+
 
 
 while True:
