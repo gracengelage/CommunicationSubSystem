@@ -4,7 +4,7 @@ import usys
 import ustruct as struct
 import utime
 from machine import Pin, SPI
-from nrf24l01 import NRF24L01
+from external_packages import NRF24L01
 from micropython import const
 
 # Slave pause between receiving data and checking for further packets.
