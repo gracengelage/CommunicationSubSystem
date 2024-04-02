@@ -110,7 +110,6 @@ while True:
         # 1 means communication signal received, 0 means no communication signal
         if receiver.read_bit() == 0:
             communication = 1
-            print("Radiofrequency signal received")
         else:
             communication = 0
 
@@ -136,9 +135,10 @@ while True:
     else:
         INDICATOR.off()
 
-    
-    if motion_location != 0 and print_state == 0:
-        print("radio signal is being recieved")
+    print("Signal received:", receiver.read_bit)
+
+    if receiver.read_bit() == 0 and print_state == 0:
+        print("Positive radio signal is being recieved")
         print_state = 1
     if print_state == 1 and motion_location == 0:
         print_state = 0
