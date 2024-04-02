@@ -77,10 +77,10 @@ while True:
         LIGHT.on()
         for i in range(8):
             transmitter.send_bit(0)
-        print("message sent: 00000000")
-        utime.sleep(1)
+            utime.sleep(0.01)
+        print("message sent.")
 
-    utime.sleep(1)
+    utime.sleep(0.1)
 
     ##################
     # Receiver Code 
