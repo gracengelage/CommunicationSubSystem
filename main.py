@@ -72,6 +72,24 @@ print_state = 0
 
 
 while True:
+    ##################
+    # Transmitter Code 
+    ##################
+
+    motion = pir.value()
+    if motion == 1:
+        LIGHT.on()
+        for i in range(8):
+            transmitter.send_bit(0)
+            utime.sleep(0.01)
+        print("message sent.")
+
+    utime.sleep(0.1)
+
+    ##################
+    # Receiver Code 
+    ##################
+
     # update the current time every loop
     current_time = utime.time()
 
