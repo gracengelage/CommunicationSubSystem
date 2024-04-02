@@ -90,7 +90,12 @@ while True:
     else:
         # flip the bit value as during transmission bit gets flipped
         # 1 means communication signal received, 0 means no communication signal
-        communication = 1 if receiver.read_bit() == 0 else 0
+        if receiver.read_bit() == 0:
+            communication = 1
+            print("Radiofrequency signal received")
+        else:
+            communication = 0
+
 
     state, wait_start_time = next_state(state, motion, communication, wait_start_time, wait_duration)
 
