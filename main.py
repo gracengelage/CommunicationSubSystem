@@ -135,7 +135,7 @@ while True:
     else:
         INDICATOR.off()
 
-    print("Signal received:", receiver.read_bit)
+    print("Signal received:", receiver.read_bit())
 
     if receiver.read_bit() == 0 and print_state == 0:
         print("Positive radio signal is being recieved")
