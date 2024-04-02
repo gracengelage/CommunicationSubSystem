@@ -67,6 +67,10 @@ wait_start_time = utime.time()
 wait_duration = 5  # seconds for the sake of testing
 range_meters = 50000  # TBD!!
 
+# Determines if testing statement for communication signal should be printed
+print_state = 0
+
+
 while True:
     ##################
     # Transmitter Code 
@@ -104,7 +108,12 @@ while True:
     else:
         # flip the bit value as during transmission bit gets flipped
         # 1 means communication signal received, 0 means no communication signal
-        communication = 1 if receiver.read_bit() == 0 else 0
+        if receiver.read_bit() == 0:
+            communication = 1
+            print("Radiofrequency signal received")
+        else:
+            communication = 0
+
 
     state, wait_start_time = next_state(state, motion, communication, wait_start_time, wait_duration)
 
@@ -126,5 +135,12 @@ while True:
         INDICATOR.on()
     else:
         INDICATOR.off()
+
+    
+    if motion_location != 0 and print_state == 0:
+        print("radio signal is being recieved")
+        print_state = 1
+    if print_state == 1 and motion_location == 0:
+        print_state = 0
 
     utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
