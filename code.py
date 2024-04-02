@@ -67,6 +67,10 @@ wait_start_time = utime.time()
 wait_duration = 5  # seconds for the sake of testing
 range_meters = 50000  # TBD!!
 
+# Determines if testing statement for communication signal should be printed
+print_state = 0
+
+
 while True:
     # update the current time every loop
     current_time = utime.time()
@@ -108,5 +112,12 @@ while True:
         INDICATOR.on()
     else:
         INDICATOR.off()
+
+    
+    if motion_location != 0 and print_state == 0:
+        print("radio signal is being recieved")
+        print_state = 1
+    if print_state == 1 and motion_location == 0:
+        print_state = 0
 
     utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
