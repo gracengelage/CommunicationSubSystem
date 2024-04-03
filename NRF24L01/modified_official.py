@@ -7,7 +7,7 @@ from machine import Pin, SPI, SoftSPI
 from nrf24l01 import NRF24L01
 from micropython import const
 
-#device #0
+#device #1
 CHANNEL = 125
 sender =  True
 PAYLOAD_SIZE = 32
@@ -36,6 +36,7 @@ else:
 
 # Addresses are in little-endian format. They correspond to big-endian
 # 0xf0f0f0f0e1, 0xf0f0f0f0d2
+pipes = (b"\xe1\xf0\xf0\xf0\xf0", b"\xd2\xf0\xf0\xf0\xf0")
 pipes = (b"\xe1\xf0\xf0\xf0\xf0", b"\xd2\xf0\xf0\xf0\xf0", b"\xf0\xf0\xf0\xf0\xf0" )
 
 def initiator():
@@ -63,8 +64,7 @@ def initiator():
         led_state = max(1, (led_state << 1) & 0x0F)
         
         try:
-            print("struct size", struct.calcsize("I"))
-            nrf.send(struct.pack("!dhdh", 44.18273845, 0, 115.12345678, 3))
+            nrf.send(struct.pack("!dhdhi", 44.18273845, 0, 115.12345678, 3, millis))
  # each int is 4 bytes 
         except OSError:
             pass
@@ -73,7 +73,7 @@ def initiator():
         
         
         
-        print("sending:", struct.unpack("!dhdh", struct.pack("!dhdh", 44.18273845, 0, 115.12345678, 3)))
+        print("sending:", struct.unpack("!dhdh", struct.pack("!dhdhi", 44.18273845, 0, 115.12345678, 3, millis)))
         
 
         # start listening again
@@ -92,7 +92,7 @@ def initiator():
 
         else:
             # recv packet
-            (got_millis,) = struct.unpack("i", nrf.recv())
+            (_, _, _, _, got_millis) = struct.unpack("!dhdhi", nrf.recv())
 
             # print response and round-trip delay
             print(
@@ -128,8 +128,12 @@ def responder():
         if nrf.any():
             while nrf.any():
                 buf = nrf.recv()
-                millis, led_state, long, la = struct.unpack("!dhdh", buf)
+                millis, led_state, long, la, _ = struct.unpack("!dhdhi", buf)
                 print("received:", millis, led_state, long, la)
+                print("Formatted Number: {:.15f}".format(millis))
+                print("Original sent:    {:.15f}".format(44.18273845))
+                print("Formatted Number: {:.15f}".format(long))
+                print("Original sent:    {:.15f}".format(115.12345678))
                 for led in leds:
                     if led_state & 1:
                         led.on()
@@ -142,7 +146,7 @@ def responder():
             utime.sleep_ms(_RESPONDER_SEND_DELAY)
             nrf.stop_listening()
             try:
-                #nrf.send(struct.pack("i", millis))
+                nrf.send(buf)
                 pass
             except OSError:
                 pass
@@ -168,3 +172,4 @@ if sender:
     initiator()
 else:
     responder()
+
