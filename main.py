@@ -64,7 +64,7 @@ communication = 0
 wait_start_time = utime.time()
 
 # UPDATE THIS to be based on user input? --------------------------------------------------------------
-wait_duration = 5  # seconds for the sake of testing
+wait_duration = input("Please set the wait duration in seconds: ")  # seconds for the sake of testing
 range_meters = 50000  # TBD!!
 
 # Determines if testing statement for communication signal should be printed
@@ -103,12 +103,14 @@ while True:
 
     distance = calculate_distance(motion_location, location)
 
+    bit = reciever.read_bit()
+
     if not distance <= range_meters:
         communication = 0
     else:
         # flip the bit value as during transmission bit gets flipped
         # 1 means communication signal received, 0 means no communication signal
-        if receiver.read_bit() == 0:
+        if bit == 0:
             communication = 1
         else:
             communication = 0
@@ -129,18 +131,18 @@ while True:
     #################
     # Indicator LED
     #################
-    # If a location is being received, light up
-    if motion_location != 0:
+    # If a signal is being received, light up
+    if bit != None:
         INDICATOR.on()
     else:
         INDICATOR.off()
 
-    print("Signal received:", receiver.read_bit())
+    print("Bit received is:", bit)
 
-    if receiver.read_bit() == 0 and print_state == 0:
+    if bit == 0 and print_state == 0:
         print("Positive radio signal is being recieved")
         print_state = 1
-    if print_state == 1 and motion_location == 0:
+    if print_state == 1 and bit == 0:
         print_state = 0
 
     utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
