@@ -112,6 +112,7 @@ while True:
             communication = 1
         else:
             communication = 0
+            print("Hiiiiii")
 
 
     state, wait_start_time = next_state(state, motion, communication, wait_start_time, wait_duration)
