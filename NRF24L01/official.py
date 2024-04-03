@@ -1,3 +1,5 @@
+'''Modified from Official.py test code to better suit our praxis project'''
+
 """Test for nrf24l01 module.  Portable between MicroPython targets."""
 
 import usys
@@ -7,8 +9,11 @@ from machine import Pin, SPI, SoftSPI
 from nrf24l01 import NRF24L01
 from micropython import const
 
-CHANNEL = 125
-sender = False
+#! Configurations
+CHANNEL = 125   # 2.4 GHz channel + however many MHz (up to 125)
+                # use wifi analyzer to find the best channel
+PAYLOAD_SIZE = 32 # <= 32 Bytes
+sender = True
 
 # Responder pause between receiving data and checking for further packets.
 _RX_POLL_DELAY = const(15)
@@ -27,27 +32,29 @@ elif usys.platform == "esp32":  # Software SPI
     spi = SoftSPI(sck=Pin(25), mosi=Pin(33), miso=Pin(32))
     cfg = {"spi": spi, "csn": 26, "ce": 27}
 elif usys.platform == "rp2":  # Hardware SPI with explicit pin definitions
-    spi = SPI(0, sck=Pin(6), mosi=Pin(7), miso=Pin(4))
+    spi = SPI(0, sck=Pin(6), mosi=Pin(7), miso=Pin(4)) #! pinout here must be correct physically as well!!!
     cfg = {"spi": spi, "csn": 13, "ce": 17}
 else:
     raise ValueError("Unsupported platform {}".format(usys.platform))
 
 # Addresses are in little-endian format. They correspond to big-endian
 # 0xf0f0f0f0e1, 0xf0f0f0f0d2
-pipes = (b"\xe1\xf0\xf0\xf0\xf0", b"\xd2\xf0\xf0\xf0\xf0")
-
+# ie. the last byte is the first byte transmitted
+#! IMPORTANT: addresses must share the same MSBs, only the LSBs should be different
+pipes = (b"\xe1\xf0\xf0\xf0\xf0", b"\xd2\xf0\xf0\xf0\xf0", b"\xf0\xf0\xf0\xf0\xf0")
+#todo assign the addresses to specific picos so we can identify them
 
 def initiator():
     csn = Pin(cfg["csn"], mode=Pin.OUT, value=1)
     ce = Pin(cfg["ce"], mode=Pin.OUT, value=0)
     spi = cfg["spi"]
-    nrf = NRF24L01(spi, csn, ce, payload_size=8, channel = CHANNEL)
+    nrf = NRF24L01(spi, csn, ce, payload_size= PAYLOAD_SIZE, channel = CHANNEL)
 
     nrf.open_tx_pipe(pipes[0])
     nrf.open_rx_pipe(1, pipes[1])
     nrf.start_listening()
 
-    num_needed = 100
+    num_needed = 1
     num_successes = 0
     num_failures = 0
     led_state = 0
@@ -59,11 +66,20 @@ def initiator():
         nrf.stop_listening()
         millis = utime.ticks_ms()
         led_state = max(1, (led_state << 1) & 0x0F)
-        print("sending:", millis, led_state)
+        
         try:
-            nrf.send(struct.pack("ii", 1234567890, led_state))
+            print("struct size", struct.calcsize("I"))
+            nrf.send(struct.pack("!dhdh", 44.18273845, 0, 115.12345678, 3))
+ # each int is 4 bytes 
         except OSError:
             pass
+        
+    
+        
+        
+        
+        print("sending:", struct.unpack("!dhdh", struct.pack("!dhdh", 44.18273845, 0, 115.12345678, 3)))
+        
 
         # start listening again
         nrf.start_listening()
@@ -105,7 +121,7 @@ def responder():
     csn = Pin(cfg["csn"], mode=Pin.OUT, value=1, pull = Pin.PULL_UP)
     ce = Pin(cfg["ce"], mode=Pin.OUT, value=0)
     spi = cfg["spi"]
-    nrf = NRF24L01(spi, csn, ce, payload_size=8, channel = CHANNEL)
+    nrf = NRF24L01(spi, csn, ce, payload_size= PAYLOAD_SIZE, channel = CHANNEL)
 
     nrf.open_tx_pipe(pipes[1])
     nrf.open_rx_pipe(1, pipes[0])
@@ -117,7 +133,7 @@ def responder():
         if nrf.any():
             while nrf.any():
                 buf = nrf.recv()
-                millis, led_state = struct.unpack("ii", buf)
+                millis = struct.unpack("i", buf)
                 print("received:", millis, led_state)
                 for led in leds:
                     if led_state & 1:
