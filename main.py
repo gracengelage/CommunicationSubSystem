@@ -1,6 +1,3 @@
-
-from external_packages.custom_rf.transmitter import Transmitter
-from external_packages.custom_rf.receiver import Receiver
 import utime
 import machine
 from machine import Pin, SPI, SoftSPI
@@ -12,6 +9,7 @@ from external_packages.NRF24L01.receiver import receive
 from communication_functions.get_location import get_location, location_string
 from communication_functions.update_state import next_state
 from communication_functions.calculate_distance import calculate_distance
+from sensing_code.ultrasonic import measure_distance, is_motion
 
 
 ###############
@@ -24,12 +22,6 @@ current_time = utime.time()
 ########################
 # Receiver related setup
 ########################
-
-# Create an instance of the Receiver class with GPIO27
-# receiver = Receiver(27)
-
-# Create an instance of the Transmitter class with GPIO17
-transmitter = Transmitter(17)
 
 ###################
 # GPS related setup
@@ -117,6 +109,18 @@ for i, pipe in enumerate(other_pipes):
 
 nrf.start_listening()
 
+#########################
+# Ultrasonic Sensor Setup
+#########################
+
+trigger = machine.Pin(2, machine.Pin.OUT)
+echo = machine.Pin(3, machine.Pin.IN)
+
+# Calibration reference
+reference = 800
+
+send_signal = False
+
 #################
 # Debugging setup
 #################
@@ -131,6 +135,18 @@ range_meters = 50000  # TBD!!
 while True:
     # update the current time every loop
     current_time = utime.time()
+
+    #################
+    # Get motion code
+    #################
+
+    real_dist = measure_distance(trigger, echo)
+
+    if is_motion(reference, real_dist) == True:
+        motion = 1
+        utime.sleep(0.8)
+    else:
+        motion = 0
 
     ##################
     # Transmitter Code 
@@ -175,17 +191,16 @@ while True:
     else:
         network_led.off()
 
-    #################
-    # Indicator LED
-    #################
-    if has_comm:
-        network_led.on()
-        utime.sleep(0.2)
+    ############
+    # Motion LED
+    ############
+    if motion == 1:
+        sensor_led.on()
     else:
-        network_led.off()
+        sensor_led.off()
 
     if valid_comm == 1 and print_state == 0:
-        print("Positive radio signal is being recieved")
+        print("Correct radio signal is being recieved")
         print_state = 1
     if print_state == 1 and valid_comm == 1:
         print_state = 0

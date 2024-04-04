@@ -10,8 +10,6 @@ def receive(nrf,
              ):
     _RX_POLL_DELAY = 15
 
-    nrf.start_listening()
-
     # this keeps track of whether or not the device receive any signal, regardless of in range or not
     has_device = 0
 
