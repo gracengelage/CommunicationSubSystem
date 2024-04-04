@@ -149,9 +149,9 @@ while True:
     ##################
 
     # get location at the beginning or once 10 seconds for testing
-    if not has_location or current_time - start_time > 10:
-        latitude, latitude_quad, longitude, longitude_quad = get_location()
-        print("Location:", latitude, latitude_quad, longitude, longitude_quad)
+    # if not has_location or current_time - start_time > 10:
+    #     latitude, latitude_quad, longitude, longitude_quad = get_location()
+    #     print("Location:", latitude, latitude_quad, longitude, longitude_quad)
 
     valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
