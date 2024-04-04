@@ -16,7 +16,7 @@ def transmit(nrf,
     nrf.send(send_pack)
 
     # do a brief delay
-    utime.sleep_ms(15)
+    #utime.sleep_ms(15)
 
     # print out what is sent
     print("sending:", struct.unpack("!dhdhi", send_pack))
