@@ -28,8 +28,6 @@ current_time = utime.time()
 # Create an instance of the Receiver class with GPIO27
 # receiver = Receiver(27)
 
-# Create an instance of the Transmitter class with GPIO17
-transmitter = Transmitter(17)
 
 ###################
 # GPS related setup
@@ -37,7 +35,7 @@ transmitter = Transmitter(17)
 
 # variable to show if GPS location exists
 has_location = True
-latitude = 44.18273845
+latitude = 89.18273845
 latitude_quad = 0
 longitude = 115.12345678
 longitude_quad = 3
@@ -47,9 +45,9 @@ longitude_quad = 3
 ################
 
 # This LED represents the big light
-sensor_led = machine.Pin(12, machine.Pin.OUT)
-network_led = machine.Pin(14, machine.Pin.OUT)
-main_led = machine.Pin(15, machine.Pin.OUT)
+sensor_led = machine.Pin(12, machine.Pin.OUT) #green
+network_led = machine.Pin(14, machine.Pin.OUT) #red
+main_led = machine.Pin(15, machine.Pin.OUT) #big blue one
 
 ##############
 # Sensor Setup
@@ -61,7 +59,7 @@ ultrasonic = machine.Pin(3, machine.Pin.IN)
 # State setup
 #############
 
-state = 0
+state = 0 #@michael you should give a legend for what state numbers are what here
 
 # Initialise motion and communication signal
 motion = 0

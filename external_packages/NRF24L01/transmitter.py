@@ -23,3 +23,6 @@ def transmit(nrf,
 
     # start listening again
     nrf.start_listening()
+    
+    # allow for the receiver to collect signals
+    utime.sleep(1)
