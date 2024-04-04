@@ -57,6 +57,65 @@ for i, pipe in enumerate(other_pipes):
     
 nrf.start_listening()
 
+def transmit(nrf,
+             long,
+             long_hemi,
+             lat,
+             lat_hemi,
+             handshake=0):
+    
+    nrf.stop_listening()
+    
+    send_pack = struct.pack("!dhdhi", lat, lat_hemi, long, long_hemi, handshake)
+
+    # transmit data pack
+    nrf.send(send_pack)
+
+    # do a brief delay
+    utime.sleep_ms(15)
+
+    # print out what is sent
+    print("sending:", struct.unpack("!dhdhi", send_pack))
+
+    # start listening again
+    nrf.start_listening()
+
+def receiver(nrf,
+             current_lat,
+             current_long,
+             _RX_POLL_DELAY,
+             ):
+    
+    nrf.start_listening()
+
+    if nrf.any():
+        while nrf.any():
+            buf = nrf.recv()
+            s_lat, s_lat_quad, s_lon, s_lon_quad, millis, handshake = struct.unpack("!dhdhi", buf)
+            
+            sender_lat = convert_coord(s_lat, s_lat_quad)
+            sender_long = convert_coord(s_lon, s_lon_quad)
+
+            print("received:", r_lat, r_lat_quad, r_lon, r_lon_quad)
+            print("------------------------------------------------------------------")
+
+            # the sender device is less than 10 meters away
+            if calculate_distance(current_lat, current_long, sender_lat, sender_long) < 10:
+                print("******************************")
+                print("Close by device has been found")
+                print("******************************")
+
+                return True
+
+            # the current device is not within 10 meters, proceed to parsing the other devices
+            utime.sleep_ms(_RX_POLL_DELAY)
+    
+    # no device satisfies less than 10 meters requirement
+    return False
+
+        
+
+
 while True:
     if button.value():
         nrf.stop_listening()
@@ -69,6 +128,7 @@ while True:
             pass
         
         sent_pack = struct.pack("!dhdhi", 44.18273845, 0, 115.12345678, 3, millis)
+
         print("sending:", struct.unpack("!dhdhi", sent_pack))
         # start listening again
         nrf.start_listening()
