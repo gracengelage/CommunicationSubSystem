@@ -86,7 +86,4 @@ def get_location() -> str:
             location_received = location.update(new_char)
 
             if location_received and location.valid:
-                return location_string(location.latitude[0],
-                                       location.latitude[1],
-                                       location.longitude[0],
-                                       location.latitude[1])
+                return location.latitude[0], location.latitude[1], location.longitude[0], location.latitude[1]
