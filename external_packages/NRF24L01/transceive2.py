@@ -4,10 +4,10 @@ import usys
 import ustruct as struct
 import utime
 from machine import Pin, SPI, SoftSPI
-from nrf24l01 import NRF24L01
+from external_packages.NRF24L01.nrf24l01 import NRF24L01
 from micropython import const
 
-device = 0 # 0 , 1 , 2
+device = 2 # 0 , 1 , 2
 CHANNEL = 125
 sender =  True
 PAYLOAD_SIZE = 32
