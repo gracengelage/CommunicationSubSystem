@@ -37,6 +37,9 @@ def receive(nrf,
                 print("Distance: ", calculate_distance(current_lat, current_long, sender_lat, sender_long), "meters")
                 print("******************************")
 
+                # if valid an in range, you can flush the buffer
+                nrf.flush_rx()
+                
                 # return has valid communication (in range) and has communication
                 return 1, 1
             

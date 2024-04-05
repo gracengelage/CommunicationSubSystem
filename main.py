@@ -134,7 +134,8 @@ nrf.start_listening()
 print_state = 0
 
 # UPDATE THIS to be based on user input? --------------------------------------------------------------
-wait_duration = int(input("Please set the wait duration in seconds: "))  # seconds for the sake of testing
+#wait_duration = int(input("Please set the wait duration in seconds: "))  # seconds for the sake of testing
+wait_duration = 5 #seconds
 range_meters = 50000  # TBD!!
 
 while True:
@@ -180,7 +181,6 @@ while True:
     #     latitude, latitude_quad, longitude, longitude_quad = get_location()
     #     print("Location:", latitude, latitude_quad, longitude, longitude_quad)
     if motion == 0:
-        utime.sleep(5)
         valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
     state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
@@ -190,7 +190,7 @@ while True:
     ################
     if (state == 1 or state == 2):
         main_led.on()
-        #utime.sleep(0.1)
+
     else:
         main_led.off()
 
@@ -199,7 +199,6 @@ while True:
     ###################
     if has_comm == 1:
         network_led.on()
-        #utime.sleep(0.1)
     else:
         network_led.off()
 
@@ -213,4 +212,5 @@ while True:
     
  
     
-    utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
+    utime.sleep(0.1)  # Wait for 0.1 seconds every loop for debugging
+

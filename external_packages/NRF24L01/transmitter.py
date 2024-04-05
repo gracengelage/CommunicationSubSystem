@@ -27,6 +27,3 @@ def transmit(nrf,
 
     # start listening again
     nrf.start_listening()
-    
-    utime.sleep(1)
-    
