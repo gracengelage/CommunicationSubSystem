@@ -126,6 +126,18 @@ for i, pipe in enumerate(other_pipes):
 
 nrf.start_listening()
 
+#########################
+# Ultrasonic Sensor Setup
+#########################
+
+trigger = machine.Pin(2, machine.Pin.OUT)
+echo = machine.Pin(3, machine.Pin.IN)
+
+# Calibration reference
+reference = 800
+
+send_signal = False
+
 #################
 # Debugging setup
 #################
@@ -200,10 +212,10 @@ while True:
     if has_comm == 1:
         network_led.on()
     else:
-        network_led.off()
+        sensor_led.off()
 
     if valid_comm == 1 and print_state == 0:
-        print("Positive radio signal is being recieved")
+        print("Correct radio signal is being recieved")
         print_state = 1
     if print_state == 1 and valid_comm == 1:
         print_state = 0
