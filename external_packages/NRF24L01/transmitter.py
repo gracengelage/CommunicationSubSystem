@@ -13,10 +13,14 @@ def transmit(nrf,
     send_pack = struct.pack("!dhdhi", lat, lat_hemi, long, long_hemi, handshake)
 
     # transmit data pack
-    nrf.send(send_pack)
+    try:
+        nrf.send(send_pack)
+    except OSError:
+            pass
+    
 
     # do a brief delay
-    #utime.sleep_ms(15)
+    utime.sleep_ms(15)
 
     # print out what is sent
     print("sending:", struct.unpack("!dhdhi", send_pack))
@@ -24,5 +28,5 @@ def transmit(nrf,
     # start listening again
     nrf.start_listening()
     
-    # allow for the receiver to collect signals
     utime.sleep(1)
+    
