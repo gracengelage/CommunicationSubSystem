@@ -1,4 +1,4 @@
-from math import radians, sin, cos, sqrt, asin, pi, abs
+from math import radians, sin, cos, sqrt, asin, pi
 
 # def loc_str2float(loc_str) -> tuple:
 #     """
