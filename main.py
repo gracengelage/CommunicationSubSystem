@@ -152,7 +152,6 @@ while True:
     if is_motion(reference, real_dist) == True:
         sensor_led.on()  # Turn on the LED
         motion = 1
-        utime.sleep(0.8)
     else:
         sensor_led.off()
         motion = 0
@@ -181,6 +180,7 @@ while True:
     #     latitude, latitude_quad, longitude, longitude_quad = get_location()
     #     print("Location:", latitude, latitude_quad, longitude, longitude_quad)
     if motion == 0:
+        utime.sleep(5)
         valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
     state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
