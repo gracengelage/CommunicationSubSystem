@@ -15,8 +15,9 @@ def transmit(nrf,
     # transmit data pack
     try:
         nrf.send(send_pack)
-    except:
-        pass
+    except OSError:
+            pass
+    
 
     # do a brief delay
     utime.sleep_ms(15)
@@ -26,5 +27,3 @@ def transmit(nrf,
 
     # start listening again
     nrf.start_listening()
-
-    utime.sleep(1)

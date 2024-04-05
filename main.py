@@ -9,7 +9,7 @@ from external_packages.NRF24L01.receiver import receive
 from communication_functions.get_location import get_location, location_string
 from communication_functions.update_state import next_state
 from communication_functions.calculate_distance import calculate_distance
-from sensing_code.ultrasonic import measure_distance, is_motion
+from sensing_functions.ultrasonic import measure_distance, is_motion
 
 
 ###############
@@ -22,6 +22,10 @@ current_time = utime.time()
 ########################
 # Receiver related setup
 ########################
+
+# Create an instance of the Receiver class with GPIO27
+# receiver = Receiver(27)
+
 
 ###################
 # GPS related setup
@@ -44,10 +48,23 @@ network_led = machine.Pin(14, machine.Pin.OUT)
 main_led = machine.Pin(15, machine.Pin.OUT)
 
 ##############
-# Sensor Setup
+# Utrasonic Sensor Setup
 ##############
 
-ultrasonic = machine.Pin(3, machine.Pin.IN)
+# Define GPIO pins for trigger and echo
+trigger_pin = 9
+echo_pin = 10
+
+# Define LED pin
+led_pin = 25
+
+# Set up pins
+trigger = machine.Pin(trigger_pin, machine.Pin.OUT)
+echo = machine.Pin(echo_pin, machine.Pin.IN)
+send_signal = False
+
+# Calibration reference
+reference = 800
 
 #############
 # State setup
@@ -67,7 +84,7 @@ wait_start_time = utime.time()
 # Radio frequency Setup
 #######################
 
-device = 0 # 0 , 1 , 2
+device = 0# 0 , 1 , 2
 CHANNEL = 125
 sender =  True
 PAYLOAD_SIZE = 32
@@ -129,36 +146,43 @@ send_signal = False
 print_state = 0
 
 # UPDATE THIS to be based on user input? --------------------------------------------------------------
-wait_duration = input("Please set the wait duration in seconds: ")  # seconds for the sake of testing
+#wait_duration = int(input("Please set the wait duration in seconds: "))  # seconds for the sake of testing
+wait_duration = 5 #seconds
 range_meters = 50000  # TBD!!
 
 while True:
     # update the current time every loop
     current_time = utime.time()
-
-    #################
-    # Get motion code
-    #################
-
+    
+    ###################
+    # Ultrasonic Sensor
+    ###################
+    # Measure distance
     real_dist = measure_distance(trigger, echo)
+    print((real_dist, reference))
 
+    # Check if distance is out of range
     if is_motion(reference, real_dist) == True:
+        sensor_led.on()  # Turn on the LED
         motion = 1
-        utime.sleep(0.8)
     else:
+        sensor_led.off()
         motion = 0
+
+    # Update reference distance
+    reference = real_dist
 
     ##################
     # Transmitter Code 
     ##################
-
-    transmit(
-        nrf=nrf,
-        long=longitude,
-        long_hemi=longitude_quad,
-        lat=latitude,
-        lat_hemi=latitude_quad
-    )
+    if motion==1 :
+        transmit(
+            nrf=nrf,
+            long=longitude,
+            long_hemi=longitude_quad,
+            lat=latitude,
+            lat_hemi=latitude_quad
+        )
 
     ##################
     # Receiver Code 
@@ -168,8 +192,8 @@ while True:
     # if not has_location or current_time - start_time > 10:
     #     latitude, latitude_quad, longitude, longitude_quad = get_location()
     #     print("Location:", latitude, latitude_quad, longitude, longitude_quad)
-
-    valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
+    if motion == 0:
+        valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
     state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
 
@@ -178,7 +202,7 @@ while True:
     ################
     if (state == 1 or state == 2):
         main_led.on()
-        utime.sleep(0.2)
+
     else:
         main_led.off()
 
@@ -187,15 +211,6 @@ while True:
     ###################
     if has_comm == 1:
         network_led.on()
-        utime.sleep(0.2)
-    else:
-        network_led.off()
-
-    ############
-    # Motion LED
-    ############
-    if motion == 1:
-        sensor_led.on()
     else:
         sensor_led.off()
 
@@ -205,4 +220,9 @@ while True:
     if print_state == 1 and valid_comm == 1:
         print_state = 0
 
-    utime.sleep(0.1)  # Wait for 5 seconds every loop for debugging
+    
+    
+ 
+    
+    utime.sleep(0.1)  # Wait for 0.1 seconds every loop for debugging
+

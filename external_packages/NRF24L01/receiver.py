@@ -10,6 +10,8 @@ def receive(nrf,
              ):
     _RX_POLL_DELAY = 15
 
+    # nrf.start_listening() if you start listening again it will flush the buffer so don't do it here!!
+
     # this keeps track of whether or not the device receive any signal, regardless of in range or not
     has_device = 0
 
@@ -32,14 +34,19 @@ def receive(nrf,
             if calculate_distance(current_lat, current_long, sender_lat, sender_long) < 10:
                 print("******************************")
                 print("Close by device has been found")
+                print("Distance: ", calculate_distance(current_lat, current_long, sender_lat, sender_long), "meters")
                 print("******************************")
 
+                # if valid an in range, you can flush the buffer
+                nrf.flush_rx()
+                
                 # return has valid communication (in range) and has communication
                 return 1, 1
             
             else:
                 print("********************************")
                 print("Signal is sent from far far away")
+                print("Distance: ", calculate_distance(current_lat, current_long, sender_lat, sender_long), "meters")
                 print("********************************")
 
             # the current device is not within 10 meters, proceed to parsing the other devices
