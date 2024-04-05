@@ -3,11 +3,11 @@ import ustruct as struct
 import utime
 
 def receive(nrf,
-             c_lat,
-             c_lat_quad,
-             c_long,
-             c_long_quad,
-             ):
+            c_lat,
+            c_lat_quad,
+            c_long,
+            c_long_quad,
+            ):
     _RX_POLL_DELAY = 15
 
     # nrf.start_listening() if you start listening again it will flush the buffer so don't do it here!!
@@ -29,9 +29,18 @@ def receive(nrf,
 
             print("received:", s_lat, s_lat_quad, s_lon, s_lon_quad, handshake)
             print("------------------------------------------------------------------")
+            
+            distance = calculate_distance(current_lat, current_long, sender_lat, sender_long)
 
+            # for communication testing
+            if handshake == 1 and distance < 10:
+                print("**********************************")
+                print("Control Message Protocol Activated")
+                print("**********************************")
+                return 2, 1
+            
             # the sender device is less than 10 meters away
-            if calculate_distance(current_lat, current_long, sender_lat, sender_long) < 10:
+            if distance < 10:
                 print("******************************")
                 print("Close by device has been found")
                 print("Distance: ", calculate_distance(current_lat, current_long, sender_lat, sender_long), "meters")

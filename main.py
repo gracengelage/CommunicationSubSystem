@@ -75,7 +75,7 @@ state = 0
 # Initialise motion and communication signal
 motion = 0
 has_comm = 0
-valid_comm = 0
+valid_comm = 0 # 0 - no communication 1 - valid communication 2 - control message protocol
 
 # need to keep track of when state 2 starts
 wait_start_time = utime.time()
@@ -195,7 +195,34 @@ while True:
     if motion == 0:
         valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
-    state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
+    # control message protocol or not?
+    if valid_comm == 2:
+        network_led.on()
+        utime.sleep(1)
+        network_led.off()
+        utime.sleep(0.5)
+
+        network_led.on()
+        utime.sleep(1)
+        network_led.off()
+        utime.sleep(0.5)
+
+        network_led.on()
+        utime.sleep(1)
+        network_led.off()
+        utime.sleep(0.5)
+
+        network_led.on()
+        utime.sleep(1)
+        network_led.off()
+        utime.sleep(0.5)
+
+        network_led.on()
+        utime.sleep(1)
+        network_led.off()
+        utime.sleep(0.5)
+    else:
+        state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
 
     ################
     # Big light
@@ -219,10 +246,6 @@ while True:
         print_state = 1
     if print_state == 1 and valid_comm == 1:
         print_state = 0
-
-    
-    
- 
     
     utime.sleep(0.1)  # Wait for 0.1 seconds every loop for debugging
 
