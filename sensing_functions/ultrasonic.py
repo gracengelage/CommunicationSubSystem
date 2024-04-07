@@ -10,7 +10,6 @@ def measure_distance(trigger, echo):
 
     # Measure pulse duration
     pulse_duration = machine.time_pulse_us(echo, 1)
-    
     # Calculate distance in centimeters
     distance = pulse_duration * 0.034 / 2
     

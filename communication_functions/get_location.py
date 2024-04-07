@@ -54,7 +54,15 @@ def location_string(latitude_val,
 
 # Output Parameters:
 # Location Information ~ the location string as detailed in the location_string function output
-def get_location() -> str:
+def get_location():
+    
+    hemisphere_code = {
+        "N": 0,
+        "E": 1,
+        "S": 2,
+        "W": 3
+    }
+    
     # GPS module setup code from datasheet: https://www.waveshare.com/wiki/Pico-GPS-L76B
     # define the UART number (default 0) and its baudrate (default 9600)
     UARTx = 0
@@ -81,9 +89,8 @@ def get_location() -> str:
         if gnss_l76b.uart_any(): # make sure GPS module is getting connection
             # new data received from satellites
             new_char = chr(gnss_l76b.uart_receive_byte()[0])
-            
             # parse the GPS signal and return the new data (or None if no data received)
             location_received = location.update(new_char)
-
-            if location_received and location.valid:
-                return location.latitude[0], location.latitude[1], location.longitude[0], location.latitude[1]
+            
+            if location_received != None and location.valid != False:
+                return location.latitude[0], hemisphere_code[location.latitude[1]], location.longitude[0], hemisphere_code[location.longitude[1]]
