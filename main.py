@@ -80,7 +80,7 @@ latitude = 0
 latitude_quad = 0
 longitude = 0
 longitude_quad = 0
-
+'''
 while not has_location:
     # get location at the beginning or once 10 seconds for testing
     try:
@@ -89,7 +89,8 @@ while not has_location:
         has_location = True
     except:
         pass
-    
+'''
+  
 # use button to trigger sending
 button = machine.Pin(0, machine.Pin.IN)
 
