@@ -1,35 +1,5 @@
 from math import radians, sin, cos, sqrt, asin, pi
 
-# def loc_str2float(loc_str) -> tuple:
-#     """
-#     Convert a string of GPS location into tpules of floats containing angular coordinates
-
-#     Parameters:
-#     loc_str (str): String representation of the GPS location
-
-#     Returns:
-#     tuple: 
-#         - float: latitude of the first point (N is positive)
-#         - float: longtitude of the second point (E is positive)
-#     """
-
-#     # Extract angle coordinates (both integer and fractional part) and hemisphere information
-#     # from location string "XXXYYYYYYYYDAAABBBBBBBBE"
-#     coord1 = int(loc_str[0:11]) * 1e-8
-#     hem1 = int(loc_str[11])
-#     coord2 = int(loc_str[12:23]) * 1e-8
-#     hem2 = int(loc_str[23])
-
-#     # Convert the sign of the coordinates based on hemisphere
-#     # If the hemisphere are S or W
-#     coord1 *= -1 if hem1 in [2, 3] else 1
-#     coord2 *= -1 if hem2 in [2, 3] else 1
-
-#     # Return the north/south coordinates first then east/west
-#     if hem1 in [0, 2]:
-#         return (coord1, coord2)
-#     return (coord2, coord1)
-
 def haversine(theta) -> float:
     """ 
     Helper function for computing the haversine of an angle
@@ -76,8 +46,11 @@ def calculate_distance(lat1, long1, lat2, long2) -> float:
     return abs(d)
 
 if __name__ == "__main__":
-    loc_str_1 = "043653927650079366740613" # (43.6539276567441, -79.36674061713879)
-    loc_str_2 = "043654256660079365365273" # (43.65425666252635, -79.36536527097456)
 
-    # loc = loc_str2float(loc_str_1)
-    print(calculate_distance(loc_str_1, loc_str_2))
+    lat1 = 43.66392
+    long1 = -79.38653
+
+    lat2 = 43.66388
+    long2 = -79.38648
+    
+    print(calculate_distance(lat1, long1, lat2, long2))
