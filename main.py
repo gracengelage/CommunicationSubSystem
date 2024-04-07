@@ -32,7 +32,7 @@ current_time = utime.time()
 ###################
 
 # variable to show if GPS location exists
-has_location = True
+has_location = False
 latitude = 44.18273845
 latitude_quad = 0
 longitude = 115.12345678
@@ -75,7 +75,7 @@ state = 0
 # Initialise motion and communication signal
 motion = 0
 has_comm = 0
-valid_comm = 0 # 0 - no communication 1 - valid communication 2 - control message protocol
+valid_comm = 0
 
 # need to keep track of when state 2 starts
 wait_start_time = utime.time()
@@ -110,7 +110,7 @@ else:
 
 # Addresses are in little-endian format. They correspond to big-endian
 # 0xf0f0f0f0e1, 0xf0f0f0f0d2
-pipes = (b"\xe1\xf0\xf0\xf0\xf0", b"\xd2\xf0\xf0\xf0\xf0", b"\xf0\xf0\xf0\xf0\xf0" )
+pipes = (b"\xe1\xf0\xf0\xf0\xf0", b"\xd2\xf0\xf0\xf0\xf0", b"\xf0\xf0\xf0\xf0\xf0", b"\xf3\xf0\xf0\xf0\xf0" )
 
 csn = Pin(cfg["csn"], mode=Pin.OUT, value=1)
 ce = Pin(cfg["ce"], mode=Pin.OUT, value=0)
@@ -120,23 +120,11 @@ nrf = NRF24L01(spi, csn, ce, payload_size=PAYLOAD_SIZE, channel=CHANNEL)
 nrf.open_tx_pipe(pipes[device]) # send through your own pipe
 
 # open the other pipes for receiving
-other_pipes = [pipes[i] for i in range(3) if i != device]
+other_pipes = [pipes[i] for i in range(4) if i != device]
 for i, pipe in enumerate(other_pipes):
     nrf.open_rx_pipe(i, pipe)
 
 nrf.start_listening()
-
-#########################
-# Ultrasonic Sensor Setup
-#########################
-
-trigger = machine.Pin(2, machine.Pin.OUT)
-echo = machine.Pin(3, machine.Pin.IN)
-
-# Calibration reference
-reference = 800
-
-send_signal = False
 
 #################
 # Debugging setup
@@ -159,7 +147,6 @@ while True:
     ###################
     # Measure distance
     real_dist = measure_distance(trigger, echo)
-    print((real_dist, reference))
 
     # Check if distance is out of range
     if is_motion(reference, real_dist) == True:
@@ -189,40 +176,46 @@ while True:
     ##################
 
     # get location at the beginning or once 10 seconds for testing
-    # if not has_location or current_time - start_time > 10:
-    #     latitude, latitude_quad, longitude, longitude_quad = get_location()
-    #     print("Location:", latitude, latitude_quad, longitude, longitude_quad)
+    if not has_location or current_time - start_time > 4:
+        try:
+            latitude, latitude_quad, longitude, longitude_quad = get_location()
+            print("Location:", '{:.8f}'.format(latitude), latitude_quad, '{:.8f}'.format(longitude), longitude_quad)
+            start_time = current_time
+        except:
+            pass
     if motion == 0:
         valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
-    # control message protocol or not?
     if valid_comm == 2:
         network_led.on()
-        utime.sleep(1)
-        network_led.off()
         utime.sleep(0.5)
-
+        network_led.off()
+        utime.sleep(0.3)
+        
         network_led.on()
-        utime.sleep(1)
-        network_led.off()
         utime.sleep(0.5)
-
+        network_led.off()
+        utime.sleep(0.3)
+        
         network_led.on()
-        utime.sleep(1)
-        network_led.off()
         utime.sleep(0.5)
-
+        network_led.off()
+        utime.sleep(0.3)
+        
         network_led.on()
-        utime.sleep(1)
-        network_led.off()
         utime.sleep(0.5)
-
+        network_led.off()
+        utime.sleep(0.3)
+        
         network_led.on()
-        utime.sleep(1)
-        network_led.off()
         utime.sleep(0.5)
+        network_led.off()
+        utime.sleep(0.3)
+        
     else:
-        state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
+        network_led.off()
+        
+    state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
 
     ################
     # Big light
@@ -236,16 +229,11 @@ while True:
     ###################
     # Communication LED
     ###################
-    if has_comm == 1:
+    if has_comm == 1 and valid_comm != 2:
         network_led.on()
     else:
-        sensor_led.off()
-
-    if valid_comm == 1 and print_state == 0:
-        print("Correct radio signal is being recieved")
-        print_state = 1
-    if print_state == 1 and valid_comm == 1:
-        print_state = 0
+        network_led.off()
     
-    utime.sleep(0.1)  # Wait for 0.1 seconds every loop for debugging
+    utime.sleep(0.01)  # Wait for 0.1 seconds every loop for debugging
+
 

@@ -16,9 +16,13 @@ def receive(nrf,
     has_device = 0
 
     if nrf.any():
+        print("has device")
         while nrf.any():
+            
             has_device = 1
+        
             buf = nrf.recv()
+            print("buffer:", buf, utime.time())
             s_lat, s_lat_quad, s_lon, s_lon_quad, handshake = struct.unpack("!dhdhi", buf)
             
             current_lat = convert_coord(c_lat, c_lat_quad)
@@ -37,6 +41,10 @@ def receive(nrf,
                 print("**********************************")
                 print("Control Message Protocol Activated")
                 print("**********************************")
+                
+                # if valid an in range, you can flush the buffer
+                nrf.flush_rx()
+                
                 return 2, 1
             
             # the sender device is less than 10 meters away
@@ -63,4 +71,7 @@ def receive(nrf,
     
     # no device satisfies less than 10 meters requirement
     # return no valid_communication and maybe has communication signal
+    # flush the buffer
+    nrf.flush_rx()
+    
     return 0, has_device

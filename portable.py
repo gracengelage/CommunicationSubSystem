@@ -28,7 +28,7 @@ longitude_quad = 3
 # Click Setup
 #############
 
-button = machine.Pin(0, machine.Pin.IN)
+button = machine.Pin(15, machine.Pin.IN, machine.Pin.PULL_UP)
 
 #######################
 # Radio frequency Setup
@@ -59,13 +59,15 @@ nrf = NRF24L01(spi, csn, ce, payload_size=PAYLOAD_SIZE, channel=CHANNEL)
 
 nrf.open_tx_pipe(b"\xf3\xf0\xf0\xf0\xf0") # send through your own pipe
 
+nrf.start_listening()
+
 while True:
     
     ##################
     # Transmitter Code 
     ##################
-    if button.value():
-        while button.value():
+    if button.value() == 0:
+        while button.value() == 0:
             pass
 
         control_message(
@@ -76,5 +78,6 @@ while True:
             lat_hemi=latitude_quad
         )
     
-        utime.sleep(0.15)  # Wait for 0.1 seconds every loop for debugging
+    utime.sleep(0.15)  # Wait for 0.1 seconds every loop for debugging
+
 
