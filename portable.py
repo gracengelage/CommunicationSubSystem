@@ -1,10 +1,9 @@
 import utime
 import machine
 from machine import Pin, SPI, SoftSPI
-from micropython import const
 import usys
 from external_packages.NRF24L01.nrf24l01 import NRF24L01
-from external_packages.NRF24L01.control_message import control_message
+from external_packages.NRF24L01.transmitter import transmit
 
 ###############
 # General Setup
@@ -70,12 +69,13 @@ while True:
         while button.value() == 0:
             pass
 
-        control_message(
+        transmit(
             nrf=nrf,
             long=longitude,
             long_hemi=longitude_quad,
             lat=latitude,
-            lat_hemi=latitude_quad
+            lat_hemi=latitude_quad,
+            handshake=1
         )
     
     utime.sleep(0.15)  # Wait for 0.1 seconds every loop for debugging

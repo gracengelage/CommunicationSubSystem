@@ -16,13 +16,11 @@ def receive(nrf,
     has_device = 0
 
     if nrf.any():
-        print("has device")
         while nrf.any():
             
             has_device = 1
         
             buf = nrf.recv()
-            print("buffer:", buf, utime.time())
             s_lat, s_lat_quad, s_lon, s_lon_quad, handshake = struct.unpack("!dhdhi", buf)
             
             current_lat = convert_coord(c_lat, c_lat_quad)
@@ -31,6 +29,7 @@ def receive(nrf,
             sender_lat = convert_coord(s_lat, s_lat_quad)
             sender_long = convert_coord(s_lon, s_lon_quad)
 
+            print("------------------------------------------------------------------")
             print("received:", s_lat, s_lat_quad, s_lon, s_lon_quad, handshake)
             print("------------------------------------------------------------------")
             
@@ -51,7 +50,7 @@ def receive(nrf,
             if distance < 10:
                 print("******************************")
                 print("Close by device has been found")
-                print("Distance: ", calculate_distance(current_lat, current_long, sender_lat, sender_long), "meters")
+                print("Distance: ", distance, "meters")
                 print("******************************")
 
                 # if valid an in range, you can flush the buffer
@@ -63,7 +62,7 @@ def receive(nrf,
             else:
                 print("********************************")
                 print("Signal is sent from far far away")
-                print("Distance: ", calculate_distance(current_lat, current_long, sender_lat, sender_long), "meters")
+                print("Distance: ", distance, "meters")
                 print("********************************")
 
             # the current device is not within 10 meters, proceed to parsing the other devices

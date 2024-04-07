@@ -1,14 +1,12 @@
 import utime
 import machine
 from machine import Pin, SPI, SoftSPI
-from micropython import const
 import usys
 from external_packages.NRF24L01.nrf24l01 import NRF24L01
 from external_packages.NRF24L01.transmitter import transmit
 from external_packages.NRF24L01.receiver import receive
-from communication_functions.get_location import get_location, location_string
+from communication_functions.get_location import get_location
 from communication_functions.update_state import next_state
-from communication_functions.calculate_distance import calculate_distance
 from sensing_functions.ultrasonic import measure_distance, is_motion
 
 
@@ -18,14 +16,6 @@ from sensing_functions.ultrasonic import measure_distance, is_motion
 
 start_time = utime.time()
 current_time = utime.time()
-
-########################
-# Receiver related setup
-########################
-
-# Create an instance of the Receiver class with GPIO27
-# receiver = Receiver(27)
-
 
 ###################
 # GPS related setup
@@ -47,9 +37,9 @@ sensor_led = machine.Pin(12, machine.Pin.OUT)
 network_led = machine.Pin(14, machine.Pin.OUT)
 main_led = machine.Pin(15, machine.Pin.OUT)
 
-##############
+########################
 # Utrasonic Sensor Setup
-##############
+########################
 
 # Define GPIO pins for trigger and echo
 trigger_pin = 9
@@ -76,6 +66,8 @@ state = 0
 motion = 0
 has_comm = 0
 valid_comm = 0
+
+wait_duration = 5 # seconds
 
 # need to keep track of when state 2 starts
 wait_start_time = utime.time()
@@ -126,18 +118,6 @@ for i, pipe in enumerate(other_pipes):
 
 nrf.start_listening()
 
-#################
-# Debugging setup
-#################
-
-# Determines if testing statement for communication signal should be printed
-print_state = 0
-
-# UPDATE THIS to be based on user input? --------------------------------------------------------------
-#wait_duration = int(input("Please set the wait duration in seconds: "))  # seconds for the sake of testing
-wait_duration = 5 #seconds
-range_meters = 50000  # TBD!!
-
 while True:
     # update the current time every loop
     current_time = utime.time()
@@ -176,11 +156,12 @@ while True:
     ##################
 
     # get location at the beginning or once 10 seconds for testing
-    if not has_location or current_time - start_time > 4:
+    if not has_location or current_time - start_time > 10:
         try:
             latitude, latitude_quad, longitude, longitude_quad = get_location()
             print("Location:", '{:.8f}'.format(latitude), latitude_quad, '{:.8f}'.format(longitude), longitude_quad)
             start_time = current_time
+            has_location = True
         except:
             pass
     if motion == 0:
