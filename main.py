@@ -17,17 +17,6 @@ from sensing_functions.ultrasonic import measure_distance, is_motion
 start_time = utime.time()
 current_time = utime.time()
 
-###################
-# GPS related setup
-###################
-
-# variable to show if GPS location exists
-has_location = False
-latitude = 44.18273845
-latitude_quad = 0
-longitude = 115.12345678
-longitude_quad = 3
-
 ################
 # LED setup
 ################
@@ -76,11 +65,31 @@ wait_start_time = utime.time()
 # Radio frequency Setup
 #######################
 
-device = 0# 0 , 1 , 2
+device = # 0 , 1 , 2
 CHANNEL = 125
 sender =  True
 PAYLOAD_SIZE = 32
 
+###################
+# GPS related setup
+###################
+
+# variable to show if GPS location exists
+has_location = False
+latitude = 0
+latitude_quad = 0
+longitude = 0
+longitude_quad = 0
+
+while not has_location:
+    # get location at the beginning or once 10 seconds for testing
+    try:
+        latitude, latitude_quad, longitude, longitude_quad = get_location()
+        print("Location:", '{:.8f}'.format(latitude), latitude_quad, '{:.8f}'.format(longitude), longitude_quad)
+        has_location = True
+    except:
+        pass
+    
 # use button to trigger sending
 button = machine.Pin(0, machine.Pin.IN)
 
@@ -119,9 +128,10 @@ for i, pipe in enumerate(other_pipes):
 nrf.start_listening()
 
 while True:
+    
     # update the current time every loop
     current_time = utime.time()
-    
+        
     ###################
     # Ultrasonic Sensor
     ###################
@@ -155,15 +165,7 @@ while True:
     # Receiver Code 
     ##################
 
-    # get location at the beginning or once 10 seconds for testing
-    if not has_location or current_time - start_time > 10:
-        try:
-            latitude, latitude_quad, longitude, longitude_quad = get_location()
-            print("Location:", '{:.8f}'.format(latitude), latitude_quad, '{:.8f}'.format(longitude), longitude_quad)
-            start_time = current_time
-            has_location = True
-        except:
-            pass
+    
     if motion == 0:
         valid_comm, has_comm = receive(nrf, c_lat=latitude, c_lat_quad=latitude_quad, c_long=longitude, c_long_quad=longitude_quad)
 
@@ -193,9 +195,6 @@ while True:
         network_led.off()
         utime.sleep(0.3)
         
-    else:
-        network_led.off()
-        
     state, wait_start_time = next_state(state, motion, valid_comm, wait_start_time, wait_duration)
 
     ################
@@ -216,5 +215,6 @@ while True:
         network_led.off()
     
     utime.sleep(0.01)  # Wait for 0.1 seconds every loop for debugging
+
 
 
