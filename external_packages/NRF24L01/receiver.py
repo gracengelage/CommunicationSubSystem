@@ -36,7 +36,7 @@ def receive(nrf,
             distance = calculate_distance(current_lat, current_long, sender_lat, sender_long)
 
             # for communication testing
-            if handshake == 1 and distance < 10:
+            if handshake == 1:
                 print("**********************************")
                 print("Control Message Protocol Activated")
                 print("**********************************")
