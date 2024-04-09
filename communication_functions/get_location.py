@@ -1,14 +1,18 @@
 from external_packages.GPS import l76x
 from external_packages.GPS.micropyGPS import MicropyGPS
 
-"""
-Output Parameters:
-Latitude Value (float)
-Latitude Quadrant (int)
-Longitude Vlaue (float)
-Longitude Quadrant (int)
-"""
 def get_location():
+    """
+    This function continuously obtains satellite signals from the GPS module until a valid location is received.
+    This function creates a GPS object that contains the location information of the device.
+    Returns the latitude value, latitude quadrant, longitude value, longitude quadrant that gets passed to other devices through transmission functions.
+
+    Output Parameters:
+    Latitude Value (float)
+    Latitude Quadrant (int)
+    Longitude Vlaue (float)
+    Longitude Quadrant (int)
+    """
     
     hemisphere_code = {
         "N": 0,

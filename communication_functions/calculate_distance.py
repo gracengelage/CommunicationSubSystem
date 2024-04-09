@@ -4,10 +4,10 @@ def haversine(theta) -> float:
     """ 
     Helper function for computing the haversine of an angle
 
-    Parameter:
+    Input Parameter:
     theta (float): angle in radian
 
-    Returns:
+    Output Parameter:
     float: the haversine of the angle
     """
     return (sin(theta/2))**2
@@ -20,11 +20,11 @@ def calculate_distance(lat1, long1, lat2, long2) -> float:
     """
     Calculate the great circle distance between two points on the earth specified in decimal degrees and directions.
 
-    Parameters:
+    Input Parameters:
     sender_loc_str (str): the GPS coordinate string of the signal sender
     receiver_loc_str (str): the GPS coordinate string of the signal receiver
 
-    Returns:
+    Output Parameters:
     float: Distance between the two points in meters.
     """
 

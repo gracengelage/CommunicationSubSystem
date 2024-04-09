@@ -8,6 +8,25 @@ def receive(nrf,
             c_long,
             c_long_quad,
             ):
+    """
+    Continuously listens for communication signals from nearby devices.
+    Calculate distance between incoming device and current device
+    If CMP signal is received:
+        Network LED flashes 5 times
+    If communication signal is received and within range:
+        Network LED and main LED lights up
+    If communication signal is received and out of range:
+        Network LED lights up
+
+    Input Parameters:
+    nrf: radio frequency object
+    c_lat, c_lat_quad, c_long, c_long_quand: current location
+
+    Output Parameters: 
+    num1: signal recieved in range
+    num2: signal recieved 
+    """
+
     _RX_POLL_DELAY = 15
 
     # nrf.start_listening() if you start listening again it will flush the buffer so don't do it here!!
